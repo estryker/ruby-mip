@@ -1,13 +1,24 @@
 require 'ble'
-require 'utils'
+require '../lib/utils'
 
 class MiP
   include Utils
   
   def initialize(uuid, port = 'hci0')
     @mip = BLE::Device.new('hci0',uuid)
-    @mip.connect
-    @mip_writer = @mip[0xFFE0, 0xFFE4]
+    num_tries = 0
+    begin
+      @mip.connect
+    rescue Exception
+      sleep 1
+      num_tries += 1
+      retry unless num_tries > 10
+    end
+    unless @mip.is_connected?
+      raise "Couldn't connect to MiP"
+    end
+    @mip_writer = @mip[0xFFE0, 0xFFE4] # ArgumentError: unable to get UUID for characteristic
+
     @mip_reader = @mip[0xFFE5, 0xFFE9]
   end
 
