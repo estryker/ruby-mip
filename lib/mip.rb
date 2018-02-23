@@ -1,7 +1,9 @@
 require 'ble'
+require 'utils'
 
 class MiP
-
+  include Utils
+  
   def initialize(uuid, port = 'hci0')
     @mip = BLE::Device.new('hci0',uuid)
     @mip.connect
