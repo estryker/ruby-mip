@@ -1,6 +1,6 @@
 module Utils
   def  color_to_bytes(color_str)
-    h = (COLORS[color] || {:r => 0, :g => 0, :b => 255})
+    h = (COLORS[color_str] || {:r => 0, :g => 0, :b => 255})
     return [h[:r],h[:g],h[:b]]
   end
 
