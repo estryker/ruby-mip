@@ -22,7 +22,7 @@ class MiP
   
   def initialize mac
     @mac = mac
-    @curr_speed = 5
+    @curr_speed = 15
     connect!
   end
 
@@ -84,8 +84,8 @@ class MiP
   end
 
   def spin duration
-    send_command 0x78, 0x1,0x60
-    sleep duration % 60
+    send_command 0x78, 0x10,0x60
+    sleep (duration % 60)
     stop
   end
 
@@ -98,7 +98,7 @@ class MiP
   end
 
   def laser_sound duration
-    play_sound 1, duration
+    play_sound 103, duration
   end
 
   def fall_back
