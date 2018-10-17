@@ -5,10 +5,29 @@ require '../lib/utils'
 
 class MiP
   include Utils
+
+  class << self
+
+    def start mac,&blk
+      mip = MiP.new mac
+      if block_given?
+        begin
+          mip.instance_eval(&blk)
+        ensure
+          mip.disconnect!
+        end
+      end
+    end
+  end
   
-  def initialize(mac)
+  def initialize mac
     @mac = mac
+    @curr_speed = 5
     connect!
+  end
+
+  def speed new_speed
+    @curr_speed = new_speed % 30
   end
 
   def connect!
@@ -16,14 +35,7 @@ class MiP
     # popen3 to send it commands
     # stdin, stdout, stderr, wait_thr = Open3.popen3("gatttool -b ")
     @mip_writer, @mip_reader, @mip_error, @gatt_pid = Open3.popen3("gatttool -b #{@mac} -I ")
-    @mip_writer.puts("connect")
-    sleep(3)
-    until @mip_reader.ready?
-      sleep(1)
-    end
-    puts "gatttool pid: #{@gatt_pid}"
-    # TODO: check to see if the reader is empty first, then read
-    message = @mip_reader.read_nonblock(1000)
+    message = send_text_command "connect"
     if message.include?("Connection successful") # message.empty?
       @connected = true
     else
@@ -36,13 +48,7 @@ class MiP
   end
   
   def disconnect!
-    @mip_writer.puts("disconnect")
-    sleep(3)
-
-    until @mip_reader.ready?
-      sleep(1)
-    end
-    message = @mip_reader.read_nonblock(1000)
+    message = send_text_command "disconnect"
     
     if message.include? "disconnect"
       @connected = false
@@ -64,15 +70,62 @@ class MiP
   def get_status
     send_command(0x79)
   end
+
+  def forward duration
+    send_command 0x71, @curr_speed, duration
+  end
+
+  def turnright degrees
+    send_command 0x74, ((degrees %360) / 5) & 0xFF, 10
+  end
+
+  def turnleft degrees
+    send_command 0x75, ((degrees %360) / 5) & 0xFF, 10
+  end
+
+  def spin duration
+    send_command 0x78, 0x1,0x60
+    sleep duration % 60
+    stop
+  end
+
+  def stop
+    send_command 0x77
+  end
+
+  def play_sound sound, duration
+    send_command 0x6, sound % 106, duration & 0xFF
+  end
+
+  def laser_sound duration
+    play_sound 1, duration
+  end
+
+  def fall_back
+    send_command 0x8, 0x0
+  end
+  
   :private
 
+  def send_text_command command
+
+    # this is a kludge. We need to pause until the command should have executed
+    @mip_writer.puts(command)
+    sleep(3)
+    until @mip_reader.ready?
+      sleep(1)
+    end
+
+    @mip_reader.read_nonblock(1000)
+  end
+  
   # for now lets not allow users to send commands directly.
   # Note that I would rather use Ruby BLE or dbus to send commands, but this abstraction *should*
   # make the change easy later
   def send_command(*args)
     # flatten the args, make sure each byte is between 0-0xFF, and send it.
     command_str = "char-write-cmd 0x001b " + args.flatten.map {|b| sprintf("%02X", b & 0xFF)}.join
-    print command_str
+    puts command_str
     @mip_writer.puts(command_str)
     
     # TODO: check to see if the reader has anything in the buffer, then read
