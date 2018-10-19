@@ -9,9 +9,8 @@ MiP.start '1C:37:8D:FB:20:87' do
     turnright 90
     laser_sound 5
   end
+  spinright 5
   flash_chest 'red'
   sleep 5
-  spinright 5
-  fall_back
 end
 
