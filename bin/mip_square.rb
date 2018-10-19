@@ -11,7 +11,7 @@ MiP.start '1C:37:8D:FB:20:87' do
   end
   flash_chest 'red'
   sleep 5
-  spin 10
+  spinright 5
   fall_back
 end
 

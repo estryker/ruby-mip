@@ -83,10 +83,16 @@ class MiP
     send_command 0x75, ((degrees %360) / 5) & 0xFF, 10
   end
 
-  def spin duration
-    send_command 0x78, 0x10,0x60
-    sleep (duration % 60)
-    stop
+  def spinright times
+    times.times do 
+      send_command 0x74, 0x72,0x24
+    end
+  end
+
+  def spinleft times
+    times.times do 
+      send_command 0x73, 0x72,0x24
+    end
   end
 
   def stop
