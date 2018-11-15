@@ -143,7 +143,8 @@ class MiP
   end
   
   :private
-  #:nodoc 
+  
+  # :nodoc: 
   def send_text_command command
 
     # this is a kludge. We need to pause until the command should have executed
@@ -156,10 +157,11 @@ class MiP
     @mip_reader.read_nonblock(1000)
   end
 
-  #:nodoc
+
   # for now lets not allow users to send commands directly.
   # Note that I would rather use Ruby BLE or dbus to send commands, but this abstraction *should*
   # make the change easy later
+  # :nodoc:
   def send_command(*args)
     # flatten the args, make sure each byte is between 0-0xFF, and send it.
     command_str = "char-write-cmd 0x001b " + args.flatten.map {|b| sprintf("%02X", b & 0xFF)}.join
@@ -176,7 +178,7 @@ class MiP
     # pack_response(@mip_reader.read)
   end
 
-  #:nodoc
+  # :nodoc:
   def pack_response(response)
     # convert from ascii hex to an array of bytes. To be interpreted by the sending function
     # I'm not sure I'm reading the docs right. to be tested ...
