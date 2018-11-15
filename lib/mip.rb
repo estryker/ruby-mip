@@ -9,7 +9,7 @@ class MiP
   class << self
 
     def start mac,&blk
-      mip = MiP.new mac
+      mip = MiP.new(mac_address: mac)
       if block_given?
         begin
           mip.instance_eval(&blk)
@@ -20,13 +20,13 @@ class MiP
     end
   end
   
-  def initialize mac
-    @mac = mac
+  def initialize(mac_address:)
+    @mac = mac_address
     @curr_speed = 15
     connect!
   end
 
-  def speed new_speed
+  def speed(new_speed:)
     @curr_speed = new_speed % 30
   end
 
@@ -62,7 +62,7 @@ class MiP
     puts "closed"
   end
   
-  def flash_chest(color="red", on_duration = 5, off_duration = 5)
+  def flash_chest(color: "red", on_duration: 5, off_duration: 5)
     send_command(0x89, color_to_bytes(color), on_duration & 0xFF, off_duration & 0xFF)
   end
 
@@ -71,27 +71,39 @@ class MiP
     send_command(0x79)
   end
 
-  def forward duration
-    send_command 0x71, @curr_speed, duration
+  # TODO: make this forward_time??
+  def forward(duration: nil, distance: nil,angle: 0)
+
+    if duration.nil? and not distance.nil?
+      turn_dir = angle > 0 ? 0x0 : 0x1
+      turn_angle = angle % 360
+      turn_angle_high = turn_angle >> 8
+      turn_angle_low = turn_angle & 0xFF
+      send_command 0x70, distance & 0xFF, turn_dir, turn_angle_high, turn_angle_low
+    elsif not duration.nil? and distance.nil?
+      send_command 0x71, @curr_speed, duration
+    else
+      raise "must specify exactly one of either duration or distance"
+    end
   end
 
-  def turnright degrees
+  def turnright(degrees: 90)
     send_command 0x74, ((degrees %360) / 5) & 0xFF, 10
   end
 
-  def turnleft degrees
+  def turnleft(degrees: 90)
     send_command 0x75, ((degrees %360) / 5) & 0xFF, 10
   end
 
-  def spinright times
-    times.times do 
+  def spinright(num_times: 1)
+    num_times.times do 
       send_command 0x74, 0x72,0x24
       sleep 1
     end
   end
 
-  def spinleft times
-    times.times do 
+  def spinleft(num_times: 1)
+    num_times.times do 
       send_command 0x73, 0x72,0x24
       sleep 1
     end
@@ -101,16 +113,20 @@ class MiP
     send_command 0x77
   end
 
-  def play_sound sound, duration
-    send_command 0x6, sound % 106, duration & 0xFF
+  def play_sound(sound_number: 0, duration: 2)
+    send_command 0x6, sound_number % 106, duration & 0xFF
   end
 
-  def laser_sound duration
-    play_sound 103, duration
+  def laser_sound(duration: 2)
+    play_sound(sound_number: 103, duration: duration)
   end
 
   def fall_back
     send_command 0x8, 0x0
+  end
+  
+  def fall_forward
+    send_command 0x8, 0x1
   end
   
   :private
