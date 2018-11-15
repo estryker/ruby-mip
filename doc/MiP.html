@@ -581,13 +581,13 @@
 
         <div class="method-description">
           
-          
+          <p>:nodoc</p>
           
           
 
           
           <div class="method-source-code" id="pack_response-source">
-            <pre><span class="ruby-comment"># File lib/mip.rb, line 178</span>
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 180</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">pack_response</span>(<span class="ruby-identifier">response</span>)
   <span class="ruby-comment"># convert from ascii hex to an array of bytes. To be interpreted by the sending function</span>
   <span class="ruby-comment"># I&#39;m not sure I&#39;m reading the docs right. to be tested ...</span>
@@ -649,15 +649,17 @@
 
         <div class="method-description">
           
-          <p>for now lets not allow users to send commands directly. Note that I would
-rather use Ruby BLE or dbus to send commands, but this abstraction
-<strong>should</strong> make the change easy later</p>
+          <p>:nodoc</p>
+
+<pre>for now lets not allow users to send commands directly.
+Note that I would rather use Ruby BLE or dbus to send commands, but this abstraction *should*
+make the change easy later</pre>
           
           
 
           
           <div class="method-source-code" id="send_command-source">
-            <pre><span class="ruby-comment"># File lib/mip.rb, line 162</span>
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 163</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">send_command</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
   <span class="ruby-comment"># flatten the args, make sure each byte is between 0-0xFF, and send it.</span>
   <span class="ruby-identifier">command_str</span> = <span class="ruby-string">&quot;char-write-cmd 0x001b &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">flatten</span>.<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-identifier">sprintf</span>(<span class="ruby-string">&quot;%02X&quot;</span>, <span class="ruby-identifier">b</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0xFF</span>)}.<span class="ruby-identifier">join</span>
@@ -696,7 +698,7 @@ rather use Ruby BLE or dbus to send commands, but this abstraction
 
         <div class="method-description">
           
-          
+          <p>:nodoc</p>
           
           
 
