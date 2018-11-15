@@ -8,6 +8,7 @@ class MiP
 
   class << self
 
+    # start the connection in block mode
     def start mac,&blk
       mip = MiP.new(mac_address: mac)
       if block_given?
@@ -19,17 +20,19 @@ class MiP
       end
     end
   end
-  
+
   def initialize(mac_address:)
     @mac = mac_address
     @curr_speed = 15
     connect!
   end
 
+  # set the new speed
   def speed(new_speed:)
     @curr_speed = new_speed % 30
   end
 
+  # connect to MiP
   def connect!
     # until we can get ruby ble working, we are going to use the gatttool and
     # popen3 to send it commands
@@ -43,10 +46,12 @@ class MiP
     end
   end
 
+  # return a true/false if MiP is connected
   def connected?
     @connected
   end
-  
+
+  # disconnect from MiP
   def disconnect!
     message = send_text_command "disconnect"
     
@@ -61,7 +66,8 @@ class MiP
     @mip_error.close
     puts "closed"
   end
-  
+
+  # flash MiP's chest LED light
   def flash_chest(color: "red", on_duration: 5, off_duration: 5)
     send_command(0x89, color_to_bytes(color), on_duration & 0xFF, off_duration & 0xFF)
   end
@@ -71,7 +77,7 @@ class MiP
     send_command(0x79)
   end
 
-  # TODO: make this forward_time??
+  # move forward by duration or distance 
   def forward(duration: nil, distance: nil,angle: 0)
 
     if duration.nil? and not distance.nil?
@@ -87,14 +93,17 @@ class MiP
     end
   end
 
+  # turn right by given number of degrees
   def turnright(degrees: 90)
     send_command 0x74, ((degrees %360) / 5) & 0xFF, 10
   end
 
+  # turn left by given number of degrees
   def turnleft(degrees: 90)
     send_command 0x75, ((degrees %360) / 5) & 0xFF, 10
   end
 
+  # spin to the right by 360 degrees the specified number of times
   def spinright(num_times: 1)
     num_times.times do 
       send_command 0x74, 0x72,0x24
@@ -102,6 +111,7 @@ class MiP
     end
   end
 
+  # spin to the left by 360 degrees the specified number of times
   def spinleft(num_times: 1)
     num_times.times do 
       send_command 0x73, 0x72,0x24
@@ -109,14 +119,17 @@ class MiP
     end
   end
 
+  # stop moving forward
   def stop
     send_command 0x77
   end
 
+  # play one of the sounds that MiP knows, from 1-106
   def play_sound(sound_number: 0, duration: 2)
     send_command 0x6, sound_number % 106, duration & 0xFF
   end
 
+  # play the laser gun sound
   def laser_sound(duration: 2)
     play_sound(sound_number: 103, duration: duration)
   end

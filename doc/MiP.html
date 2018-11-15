@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class MiP - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script src="./js/jquery.js"></script>
+<script src="./js/darkfish.js"></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="Object.html">Object</a>
+  
+</div>
+
+    <div id="includes-section" class="nav-section">
+  <h3>Included Modules</h3>
+
+  <ul class="link-list">
+  
+  
+    <li><a class="include" href="Utils.html">Utils</a>
+  
+  
+  </ul>
+</div>
+
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-new">::new</a>
+    
+    <li ><a href="#method-c-start">::start</a>
+    
+    <li ><a href="#method-i-connect-21">#connect!</a>
+    
+    <li ><a href="#method-i-connected-3F">#connected?</a>
+    
+    <li ><a href="#method-i-disconnect-21">#disconnect!</a>
+    
+    <li ><a href="#method-i-fall_back">#fall_back</a>
+    
+    <li ><a href="#method-i-fall_forward">#fall_forward</a>
+    
+    <li ><a href="#method-i-flash_chest">#flash_chest</a>
+    
+    <li ><a href="#method-i-forward">#forward</a>
+    
+    <li ><a href="#method-i-get_status">#get_status</a>
+    
+    <li ><a href="#method-i-laser_sound">#laser_sound</a>
+    
+    <li ><a href="#method-i-pack_response">#pack_response</a>
+    
+    <li ><a href="#method-i-play_sound">#play_sound</a>
+    
+    <li ><a href="#method-i-send_command">#send_command</a>
+    
+    <li ><a href="#method-i-send_text_command">#send_text_command</a>
+    
+    <li ><a href="#method-i-speed">#speed</a>
+    
+    <li ><a href="#method-i-spinleft">#spinleft</a>
+    
+    <li ><a href="#method-i-spinright">#spinright</a>
+    
+    <li ><a href="#method-i-stop">#stop</a>
+    
+    <li ><a href="#method-i-turnleft">#turnleft</a>
+    
+    <li ><a href="#method-i-turnright">#turnright</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-MiP">
+  <h1 id="class-MiP" class="class">
+    class MiP
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">(mac_address:)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 24</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">mac_address</span>))
+  <span class="ruby-ivar">@mac</span> = <span class="ruby-identifier">mac_address</span>
+  <span class="ruby-ivar">@curr_speed</span> = <span class="ruby-value">15</span>
+  <span class="ruby-identifier">connect!</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-start" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">start</span><span
+            class="method-args">(mac,&blk)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>start the connection in block mode</p>
+          
+          
+
+          
+          <div class="method-source-code" id="start-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 12</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">start</span> <span class="ruby-identifier">mac</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>
+  <span class="ruby-identifier">mip</span> = <span class="ruby-constant">MiP</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">mac_address</span><span class="ruby-operator">:</span> <span class="ruby-identifier">mac</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>
+    <span class="ruby-keyword">begin</span>
+      <span class="ruby-identifier">mip</span>.<span class="ruby-identifier">instance_eval</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)
+    <span class="ruby-keyword">ensure</span>
+      <span class="ruby-identifier">mip</span>.<span class="ruby-identifier">disconnect!</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-connect-21" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">connect!</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>connect to <a href="MiP.html">MiP</a></p>
+          
+          
+
+          
+          <div class="method-source-code" id="connect-21-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 36</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">connect!</span>
+  <span class="ruby-comment"># until we can get ruby ble working, we are going to use the gatttool and</span>
+  <span class="ruby-comment"># popen3 to send it commands</span>
+  <span class="ruby-comment"># stdin, stdout, stderr, wait_thr = Open3.popen3(&quot;gatttool -b &quot;)</span>
+  <span class="ruby-ivar">@mip_writer</span>, <span class="ruby-ivar">@mip_reader</span>, <span class="ruby-ivar">@mip_error</span>, <span class="ruby-ivar">@gatt_pid</span> = <span class="ruby-constant">Open3</span>.<span class="ruby-identifier">popen3</span>(<span class="ruby-node">&quot;gatttool -b #{@mac} -I &quot;</span>)
+  <span class="ruby-identifier">message</span> = <span class="ruby-identifier">send_text_command</span> <span class="ruby-string">&quot;connect&quot;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">message</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-string">&quot;Connection successful&quot;</span>) <span class="ruby-comment"># message.empty?</span>
+    <span class="ruby-ivar">@connected</span> = <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Couldn&#39;t connect to MiP: #{message}&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-connected-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">connected?</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>return a true/false if <a href="MiP.html">MiP</a> is connected</p>
+          
+          
+
+          
+          <div class="method-source-code" id="connected-3F-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 50</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">connected?</span>
+  <span class="ruby-ivar">@connected</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-disconnect-21" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">disconnect!</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>disconnect from <a href="MiP.html">MiP</a></p>
+          
+          
+
+          
+          <div class="method-source-code" id="disconnect-21-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 55</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">disconnect!</span>
+  <span class="ruby-identifier">message</span> = <span class="ruby-identifier">send_text_command</span> <span class="ruby-string">&quot;disconnect&quot;</span>
+  
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">message</span>.<span class="ruby-identifier">include?</span> <span class="ruby-string">&quot;disconnect&quot;</span>
+    <span class="ruby-ivar">@connected</span> = <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Couldn&#39;t disconnect from MiP: #{message}&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-ivar">@mip_writer</span>.<span class="ruby-identifier">close</span>
+  <span class="ruby-ivar">@mip_reader</span>.<span class="ruby-identifier">close</span>
+  <span class="ruby-ivar">@mip_error</span>.<span class="ruby-identifier">close</span>
+  <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;closed&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-fall_back" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">fall_back</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="fall_back-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 137</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">fall_back</span>
+  <span class="ruby-identifier">send_command</span> <span class="ruby-value">0x8</span>, <span class="ruby-value">0x0</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-fall_forward" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">fall_forward</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="fall_forward-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 141</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">fall_forward</span>
+  <span class="ruby-identifier">send_command</span> <span class="ruby-value">0x8</span>, <span class="ruby-value">0x1</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-flash_chest" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">flash_chest</span><span
+            class="method-args">(color: "red", on_duration: 5, off_duration: 5)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>flash MiP&#39;s chest LED light</p>
+          
+          
+
+          
+          <div class="method-source-code" id="flash_chest-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 71</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">flash_chest</span>(<span class="ruby-identifier">color</span><span class="ruby-operator">:</span> <span class="ruby-string">&quot;red&quot;</span>, <span class="ruby-identifier">on_duration</span><span class="ruby-operator">:</span> <span class="ruby-value">5</span>, <span class="ruby-identifier">off_duration</span><span class="ruby-operator">:</span> <span class="ruby-value">5</span>)
+  <span class="ruby-identifier">send_command</span>(<span class="ruby-value">0x89</span>, <span class="ruby-identifier">color_to_bytes</span>(<span class="ruby-identifier">color</span>), <span class="ruby-identifier">on_duration</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0xFF</span>, <span class="ruby-identifier">off_duration</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0xFF</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-forward" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">forward</span><span
+            class="method-args">(duration: nil, distance: nil,angle: 0)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>move forward by duration or distance</p>
+          
+          
+
+          
+          <div class="method-source-code" id="forward-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 81</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">forward</span>(<span class="ruby-identifier">duration</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">distance</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>,<span class="ruby-identifier">angle</span><span class="ruby-operator">:</span> <span class="ruby-value">0</span>)
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">duration</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword">and</span> <span class="ruby-keyword">not</span> <span class="ruby-identifier">distance</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">turn_dir</span> = <span class="ruby-identifier">angle</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value">0x0</span> <span class="ruby-operator">:</span> <span class="ruby-value">0x1</span>
+    <span class="ruby-identifier">turn_angle</span> = <span class="ruby-identifier">angle</span> <span class="ruby-operator">%</span> <span class="ruby-value">360</span>
+    <span class="ruby-identifier">turn_angle_high</span> = <span class="ruby-identifier">turn_angle</span> <span class="ruby-operator">&gt;&gt;</span> <span class="ruby-value">8</span>
+    <span class="ruby-identifier">turn_angle_low</span> = <span class="ruby-identifier">turn_angle</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0xFF</span>
+    <span class="ruby-identifier">send_command</span> <span class="ruby-value">0x70</span>, <span class="ruby-identifier">distance</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0xFF</span>, <span class="ruby-identifier">turn_dir</span>, <span class="ruby-identifier">turn_angle_high</span>, <span class="ruby-identifier">turn_angle_low</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-keyword">not</span> <span class="ruby-identifier">duration</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">distance</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">send_command</span> <span class="ruby-value">0x71</span>, <span class="ruby-ivar">@curr_speed</span>, <span class="ruby-identifier">duration</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;must specify exactly one of either duration or distance&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-get_status" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">get_status</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>initial test for getting a response</p>
+          
+          
+
+          
+          <div class="method-source-code" id="get_status-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 76</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">get_status</span>
+  <span class="ruby-identifier">send_command</span>(<span class="ruby-value">0x79</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-laser_sound" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">laser_sound</span><span
+            class="method-args">(duration: 2)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>play the laser gun sound</p>
+          
+          
+
+          
+          <div class="method-source-code" id="laser_sound-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 133</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">laser_sound</span>(<span class="ruby-identifier">duration</span><span class="ruby-operator">:</span> <span class="ruby-value">2</span>)
+  <span class="ruby-identifier">play_sound</span>(<span class="ruby-identifier">sound_number</span><span class="ruby-operator">:</span> <span class="ruby-value">103</span>, <span class="ruby-identifier">duration</span><span class="ruby-operator">:</span> <span class="ruby-identifier">duration</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-pack_response" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">pack_response</span><span
+            class="method-args">(response)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="pack_response-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 178</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">pack_response</span>(<span class="ruby-identifier">response</span>)
+  <span class="ruby-comment"># convert from ascii hex to an array of bytes. To be interpreted by the sending function</span>
+  <span class="ruby-comment"># I&#39;m not sure I&#39;m reading the docs right. to be tested ...</span>
+  <span class="ruby-identifier">response</span>.<span class="ruby-identifier">unpack</span>(<span class="ruby-string">&quot;C*&quot;</span>).<span class="ruby-identifier">pack</span>(<span class="ruby-string">&quot;H*&quot;</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-play_sound" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">play_sound</span><span
+            class="method-args">(sound_number: 0, duration: 2)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>play one of the sounds that <a href="MiP.html">MiP</a> knows, from 1-106</p>
+          
+          
+
+          
+          <div class="method-source-code" id="play_sound-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 128</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">play_sound</span>(<span class="ruby-identifier">sound_number</span><span class="ruby-operator">:</span> <span class="ruby-value">0</span>, <span class="ruby-identifier">duration</span><span class="ruby-operator">:</span> <span class="ruby-value">2</span>)
+  <span class="ruby-identifier">send_command</span> <span class="ruby-value">0x6</span>, <span class="ruby-identifier">sound_number</span> <span class="ruby-operator">%</span> <span class="ruby-value">106</span>, <span class="ruby-identifier">duration</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0xFF</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-send_command" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">send_command</span><span
+            class="method-args">(*args)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>for now lets not allow users to send commands directly. Note that I would
+rather use Ruby BLE or dbus to send commands, but this abstraction
+<strong>should</strong> make the change easy later</p>
+          
+          
+
+          
+          <div class="method-source-code" id="send_command-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 162</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">send_command</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+  <span class="ruby-comment"># flatten the args, make sure each byte is between 0-0xFF, and send it.</span>
+  <span class="ruby-identifier">command_str</span> = <span class="ruby-string">&quot;char-write-cmd 0x001b &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">flatten</span>.<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-identifier">sprintf</span>(<span class="ruby-string">&quot;%02X&quot;</span>, <span class="ruby-identifier">b</span> <span class="ruby-operator">&amp;</span> <span class="ruby-value">0xFF</span>)}.<span class="ruby-identifier">join</span>
+  <span class="ruby-identifier">puts</span> <span class="ruby-identifier">command_str</span>
+  <span class="ruby-ivar">@mip_writer</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-identifier">command_str</span>)
+  
+  <span class="ruby-comment"># TODO: check to see if the reader has anything in the buffer, then read</span>
+  <span class="ruby-keyword">until</span> <span class="ruby-ivar">@mip_reader</span>.<span class="ruby-identifier">ready?</span>
+    <span class="ruby-identifier">sleep</span>(<span class="ruby-value">1</span>)
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-ivar">@response</span> = <span class="ruby-ivar">@mip_reader</span>.<span class="ruby-identifier">read_nonblock</span>(<span class="ruby-value">1000</span>)[<span class="ruby-identifier">command_str</span>.<span class="ruby-identifier">length</span><span class="ruby-operator">+</span><span class="ruby-value">1</span> <span class="ruby-operator">..</span> <span class="ruby-value">-1</span>]
+                    
+  <span class="ruby-comment"># return any response in packed byte format</span>
+  <span class="ruby-comment"># pack_response(@mip_reader.read)</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-send_text_command" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">send_text_command</span><span
+            class="method-args">(command)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="send_text_command-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 147</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">send_text_command</span> <span class="ruby-identifier">command</span>
+
+  <span class="ruby-comment"># this is a kludge. We need to pause until the command should have executed</span>
+  <span class="ruby-ivar">@mip_writer</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-identifier">command</span>)
+  <span class="ruby-identifier">sleep</span>(<span class="ruby-value">3</span>)
+  <span class="ruby-keyword">until</span> <span class="ruby-ivar">@mip_reader</span>.<span class="ruby-identifier">ready?</span>
+    <span class="ruby-identifier">sleep</span>(<span class="ruby-value">1</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-ivar">@mip_reader</span>.<span class="ruby-identifier">read_nonblock</span>(<span class="ruby-value">1000</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-speed" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">speed</span><span
+            class="method-args">(new_speed:)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>set the new speed</p>
+          
+          
+
+          
+          <div class="method-source-code" id="speed-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 31</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">speed</span>(<span class="ruby-identifier">new_speed</span>))
+  <span class="ruby-ivar">@curr_speed</span> = <span class="ruby-identifier">new_speed</span> <span class="ruby-operator">%</span> <span class="ruby-value">30</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-spinleft" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">spinleft</span><span
+            class="method-args">(num_times: 1)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>spin to the left by 360 degrees the specified number of times</p>
+          
+          
+
+          
+          <div class="method-source-code" id="spinleft-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 115</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">spinleft</span>(<span class="ruby-identifier">num_times</span><span class="ruby-operator">:</span> <span class="ruby-value">1</span>)
+  <span class="ruby-identifier">num_times</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword">do</span> 
+    <span class="ruby-identifier">send_command</span> <span class="ruby-value">0x73</span>, <span class="ruby-value">0x72</span>,<span class="ruby-value">0x24</span>
+    <span class="ruby-identifier">sleep</span> <span class="ruby-value">1</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-spinright" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">spinright</span><span
+            class="method-args">(num_times: 1)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>spin to the right by 360 degrees the specified number of times</p>
+          
+          
+
+          
+          <div class="method-source-code" id="spinright-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 107</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">spinright</span>(<span class="ruby-identifier">num_times</span><span class="ruby-operator">:</span> <span class="ruby-value">1</span>)
+  <span class="ruby-identifier">num_times</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword">do</span> 
+    <span class="ruby-identifier">send_command</span> <span class="ruby-value">0x74</span>, <span class="ruby-value">0x72</span>,<span class="ruby-value">0x24</span>
+    <span class="ruby-identifier">sleep</span> <span class="ruby-value">1</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-stop" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">stop</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>stop moving forward</p>
+          
+          
+
+          
+          <div class="method-source-code" id="stop-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 123</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">stop</span>
+  <span class="ruby-identifier">send_command</span> <span class="ruby-value">0x77</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-turnleft" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">turnleft</span><span
+            class="method-args">(degrees: 90)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>turn left by given number of degrees</p>
+          
+          
+
+          
+          <div class="method-source-code" id="turnleft-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 102</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">turnleft</span>(<span class="ruby-identifier">degrees</span><span class="ruby-operator">:</span> <span class="ruby-value">90</span>)
+  <span class="ruby-identifier">send_command</span> <span class="ruby-value">0x75</span>, ((<span class="ruby-identifier">degrees</span> <span class="ruby-operator">%</span><span class="ruby-value">60</span>) <span class="ruby-operator">/</span> <span class="ruby-value">5</span>) <span class="ruby-operator">&amp;</span> <span class="ruby-value">0xFF</span>, <span class="ruby-value">10</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-turnright" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">turnright</span><span
+            class="method-args">(degrees: 90)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>turn right by given number of degrees</p>
+          
+          
+
+          
+          <div class="method-source-code" id="turnright-source">
+            <pre><span class="ruby-comment"># File lib/mip.rb, line 97</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">turnright</span>(<span class="ruby-identifier">degrees</span><span class="ruby-operator">:</span> <span class="ruby-value">90</span>)
+  <span class="ruby-identifier">send_command</span> <span class="ruby-value">0x74</span>, ((<span class="ruby-identifier">degrees</span> <span class="ruby-operator">%</span><span class="ruby-value">60</span>) <span class="ruby-operator">/</span> <span class="ruby-value">5</span>) <span class="ruby-operator">&amp;</span> <span class="ruby-value">0xFF</span>, <span class="ruby-value">10</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="http://docs.seattlerb.org/rdoc/">RDoc</a> 4.2.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

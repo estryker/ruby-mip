@@ -12,6 +12,5 @@ MiP.start '1C:37:8D:FB:20:87' do
   end
   spinright(num_times: 5)
   flash_chest(color: 'red')
-  sleep 5
 end
 
