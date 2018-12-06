@@ -5,7 +5,8 @@ require '../lib/utils'
 
 class MiP
   include Utils
-
+  Sounds = %w{burping drinking eating farting out_of_breath boxing_punch_1 boxing_punch_2 boxing_punch_3 tracking_1 mip_1 mip_2 mip_3 app awww big_shot bleh boom bye converse_1 converse_2 drop dunno fall_over_1 fall_over_2 fight game gloat go gogogo grunt_1 grunt_2 grunt_3 got_it hi_confident hi_unsure hi_scared huh humming_1 humming_2 hurt huuurgh in_love it joke k loop_1 loop_2 low_battery mippee more muah_ha music obstacle oh_oh oh_yeah oopsie ouch_1 ouch_2 play push run shake sigh singing sneeze snore stack swipe_1 swipe_2 tricks triiick trumpet waaaa wakey wheee whistling whoah woo yeah yeeesss yo yummy mood mood_angry mood_anxious mood_boring mood_cranky mood_energetic mood_excited mood_giddy mood_grumpy mood_happy mood_idea mood_impatient mood_nice mood_sad mood_short mood_sleepy mood_tired boost cage guns zings shortmute tracking2}
+  
   class << self
 
     # start the connection in block mode
@@ -27,9 +28,14 @@ class MiP
     connect!
   end
 
-  # set the new speed
-  def speed(new_speed:)
-    @curr_speed = new_speed % 30
+  # set the new speed, up to 30
+  def set_speed(new_speed:)
+    if new_speed > 30
+      new_speed = 30
+    elsif new_speed < 0
+      new_speed = 0
+    end
+    @curr_speed = new_speed 
   end
 
   # connect to MiP
@@ -124,14 +130,17 @@ class MiP
     send_command 0x77
   end
 
-  # play one of the sounds that MiP knows, from 1-106
-  def play_sound(sound_number: 0, duration: 2)
+  # play one of the sounds that MiP knows, from 1-106.
+  # Or give it a sound name from the Sound Array
+  def play_sound(sound: 0, duration: 2)
+    sound_number = 0
+    case sound
+    when String
+      sound_number = Sounds.index(sound)
+    when Fixnum
+      sound_number = sound
+    end
     send_command 0x6, sound_number % 106, duration & 0xFF
-  end
-
-  # play the laser gun sound
-  def laser_sound(duration: 2)
-    play_sound(sound_number: 103, duration: duration)
   end
 
   def fall_back
@@ -140,6 +149,38 @@ class MiP
   
   def fall_forward
     send_command 0x8, 0x1
+  end
+
+  def getup
+    send_command 0x23, 0x2
+  end
+
+  # :nodoc: 
+  def method_missing(method_name, *args, **named_args,&block)
+    puts method_name
+    if mobj = method_name.to_s.match(/^play_([a-z]{1,100})_sound$/)
+      sound_name = mobj[1]
+      puts sound_name
+      puts mobj.inspect
+      if Sounds.index(sound_name)
+        play_sound(sound: sound_name, duration: named_args[:duration] )
+      else
+        super
+      end
+    else
+      super
+    end
+  end
+
+  # :nodoc: 
+  def respond_to_missing?(method_name, *args)
+    if mobj = method_name.to_s.match(/^play_([a-z]{1,100})_sound$/)
+      sound_name = mobj[1]
+      if Sounds.index(sound_name)
+        return true
+      end
+    end
+    return false
   end
   
   :private
