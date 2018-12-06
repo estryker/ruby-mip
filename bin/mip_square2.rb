@@ -8,7 +8,7 @@ MiP.start '1C:37:8D:FB:20:87' do
   4.times do
     forward(duration: 200)
     turnright(degrees: 90)
-    play_guns_sound(duration: 5)
+    play_sound(sound: "guns", duration: 5)
   end
   spinright(num_times: 5)
   flash_chest(color: 'red')
