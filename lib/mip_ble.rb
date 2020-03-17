@@ -17,8 +17,33 @@ device.connect
 device.services.each {|s| puts s + "  -- " + device.characteristics(s).join(' ') }
 
 device.disconnect
+module BLE
+  module Service
+    add '0000ffe0-0000-1000-8000-00805f9b34fb',
+        name: 'MiP Receive Data Service',
+        nick: :mip_receive_data
+    add '0000ffe5-0000-1000-8000-00805f9b34fb',
+        name: 'MiP Send Data Service',
+        nick: :mip_send_data
+  end
+  class Characteristic
+    add '0000ffe4-0000-1000-8000-00805f9b34fb',
+        name: 'MiP Receive Data Notify Characteristic',
+        nick: :mip_receive_notify
+    add '0000ffe9-0000-1000-8000-00805f9b34fb',
+        name: 'MiP Send Data Write Characteristic',
+        nick: :mip_send_write
+  end
+end
 
 __END__
+
+According to https://github.com/WowWeeLabs/MiP-BLE-Protocol
+
+    Receive Data Service: 0xFFE0
+        Receive Data NOTIFY Characteristic: 0xFFE4
+    Send Data Service: 0xFFE5
+        Send Data WRITE Characteristic: 0xFFE9
 
 
 00001801-0000-1000-8000-00805f9b34fb  -- 
