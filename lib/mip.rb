@@ -146,6 +146,22 @@ class MiP
     end
   end
 
+  # keep going until stop command if duration_seconds == 0
+  def continuous_drive(duration_seconds: 0, spin: 0, left_spin: false,backwards: false, crazy: false)
+    speed = @curr_speed + 1
+    speed += 0x20 if backwards # range for backwards is 0x21->
+    spin += 0x20 if left_spin and spin > 0
+    if crazy 
+      speed += 0x80 
+      spin += 0x80
+    end
+    send_command 0x78, speed & 0xFF #, spin & 0xFF
+    if duration_seconds > 0
+      sleep(duration_seconds)
+      stop
+    end
+  end
+
   # turn right by given number of degrees
   def turnright(degrees: 90)
     send_command 0x74, ((degrees %360) / 5) & 0xFF, 10
