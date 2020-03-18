@@ -40,7 +40,7 @@ end
 
 #send_command(0x89, color_to_bytes(color), on_duration & 0xFF, off_duration & 0xFF)
 #
- device.write(:mip_send_data, :mip_send_write,"\x89\xFF\x00\x00\x05\x05", raw: true)
+device.write(:mip_send_data, :mip_send_write,"\x89\xFF\x00\x00\x05\x05", raw: true)
 # device.write('0000ffe5-0000-1000-8000-00805f9b34fb','0000ffe9-0000-1000-8000-00805f9b34fb', "\x89\xFF\x00\x00\x05\x05", raw: true)
 
 sleep(2)

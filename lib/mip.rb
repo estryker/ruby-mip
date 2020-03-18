@@ -1,17 +1,38 @@
-# require 'ble'
+require 'ble'
 require 'open3'
 require 'io/wait'
 require '../lib/utils'
 
+module BLE
+  module Service
+    add '0000ffe0-0000-1000-8000-00805f9b34fb',
+        name: 'MiP Receive Data Service',
+        nick: :mip_receive_data
+    add '0000ffe5-0000-1000-8000-00805f9b34fb',
+        name: 'MiP Send Data Service',
+        nick: :mip_send_data
+  end
+  class Characteristic
+    add '0000ffe4-0000-1000-8000-00805f9b34fb',
+        name: 'MiP Receive Data Notify Characteristic',
+        nick: :mip_receive_notify
+    add '0000ffe9-0000-1000-8000-00805f9b34fb',
+        name: 'MiP Send Data Write Characteristic',
+        nick: :mip_send_write
+  end
+end
+
+
 class MiP
   include Utils
   Sounds = %w{burping drinking eating farting out_of_breath boxing_punch_1 boxing_punch_2 boxing_punch_3 tracking_1 mip_1 mip_2 mip_3 app awww big_shot bleh boom bye converse_1 converse_2 drop dunno fall_over_1 fall_over_2 fight game gloat go gogogo grunt_1 grunt_2 grunt_3 got_it hi_confident hi_unsure hi_scared huh humming_1 humming_2 hurt huuurgh in_love it joke k loop_1 loop_2 low_battery mippee more muah_ha music obstacle oh_oh oh_yeah oopsie ouch_1 ouch_2 play push run shake sigh singing sneeze snore stack swipe_1 swipe_2 tricks triiick trumpet waaaa wakey wheee whistling whoah woo yeah yeeesss yo yummy mood mood_angry mood_anxious mood_boring mood_cranky mood_energetic mood_excited mood_giddy mood_grumpy mood_happy mood_idea mood_impatient mood_nice mood_sad mood_short mood_sleepy mood_tired boost cage guns zings shortmute tracking2}
-  
+  # Add some MiP specific Services and Characteristics
+
   class << self
 
     # start the connection in block mode
-    def start mac,&blk
-      mip = MiP.new(mac_address: mac)
+    def start mac,interface: 'hci0', &blk
+      mip = MiP.new(mac_address: mac, interface: interface)
       if block_given?
         begin
           mip.instance_eval(&blk)
@@ -22,9 +43,23 @@ class MiP
     end
   end
 
-  def initialize(mac_address:)
+  def initialize(mac_address:, interface: 'hci0')
     @mac = mac_address
     @curr_speed = 15
+
+    @adapter = BLE::Adapter.new(interface)
+    puts "Info: #{@adapter.iface} #{@adapter.address} #{@adapter.name}"
+    
+    # Run discovery
+    @adapter.start_discovery
+    # sleeping less than 4 seconds seems to result in not finding all the services
+    # TODO: is there a way to detect when discovery is actually done?
+    sleep(4)
+    @adapter.stop_discovery
+    
+    # Get device and connect to it
+    @device = @adapter[mac_address]
+    @connected = false
     connect!
   end
 
@@ -39,7 +74,7 @@ class MiP
   end
 
   # connect to MiP
-  def connect!
+  def connect_gatt!
     # until we can get ruby ble working, we are going to use the gatttool and
     # popen3 to send it commands
     # stdin, stdout, stderr, wait_thr = Open3.popen3("gatttool -b ")
@@ -52,13 +87,23 @@ class MiP
     end
   end
 
+  def connect!  
+    @device.connect
+    @connected = true
+  end
+
   # return a true/false if MiP is connected
   def connected?
     @connected
   end
 
-  # disconnect from MiP
   def disconnect!
+    @device.disconnect
+    @connected = false
+  end
+
+  # disconnect from MiP
+  def disconnect_gatt!
     message = send_text_command "disconnect"
     
     if message.include? "disconnect"
@@ -203,7 +248,7 @@ class MiP
   # Note that I would rather use Ruby BLE or dbus to send commands, but this abstraction *should*
   # make the change easy later
   # :nodoc:
-  def send_command(*args)
+  def send_command_old(*args)
     # flatten the args, make sure each byte is between 0-0xFF, and send it.
     command_str = "char-write-cmd 0x001b " + args.flatten.map {|b| sprintf("%02X", b & 0xFF)}.join
     puts command_str
@@ -214,6 +259,18 @@ class MiP
       sleep(1)
     end
     @response = @mip_reader.read_nonblock(1000)[command_str.length+1 .. -1]
+                      
+    # return any response in packed byte format
+    # pack_response(@mip_reader.read)
+  end
+
+  def send_command(*args)
+    # flatten the args, make sure each byte is between 0-0xFF, and send it.
+    command_str = args.flatten.map {|b| sprintf("\\x%02X", b & 0xFF)}.join
+    puts command_str
+    @device.write(:mip_send_data, :mip_send_write, command_str, raw: true)
+    
+    #@response = @device.read(:mip_receive_data,:mip_receive_notify)
                       
     # return any response in packed byte format
     # pack_response(@mip_reader.read)
