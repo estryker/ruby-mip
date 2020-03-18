@@ -14,9 +14,9 @@ adapter.stop_discovery
 device = adapter['1C:37:8D:FB:20:87']
 device.connect
 
-device.services.each {|s| puts s + "  -- " + device.characteristics(s).join(' ') }
+#device.services.each {|s| puts s + "  -- " + device.characteristics(s).join(' ') }
 
-device.disconnect
+#device.disconnect
 module BLE
   module Service
     add '0000ffe0-0000-1000-8000-00805f9b34fb',
@@ -36,6 +36,15 @@ module BLE
   end
 end
 
+#device[:mip_send_data, :mip_send_write]
+
+#send_command(0x89, color_to_bytes(color), on_duration & 0xFF, off_duration & 0xFF)
+# device.write(:mip_send_data, :mip_send_write,"\x89\xFF\x00\x00\x05\x05")
+
+device.write('0000ffe5-0000-1000-8000-00805f9b34fb','0000ffe9-0000-1000-8000-00805f9b34fb', "\x89\xFF\x00\x00\x05\x05", raw:true)
+
+sleep(2)
+device.disconnect
 __END__
 
 According to https://github.com/WowWeeLabs/MiP-BLE-Protocol
