@@ -25,7 +25,7 @@ end
 
 class MiP
   include Utils
-  Sounds = %w{burping drinking eating farting out_of_breath boxing_punch_1 boxing_punch_2 boxing_punch_3 tracking_1 mip_1 mip_2 mip_3 app awww big_shot bleh boom bye converse_1 converse_2 drop dunno fall_over_1 fall_over_2 fight game gloat go gogogo grunt_1 grunt_2 grunt_3 got_it hi_confident hi_unsure hi_scared huh humming_1 humming_2 hurt huuurgh in_love it joke k loop_1 loop_2 low_battery mippee more muah_ha music obstacle oh_oh oh_yeah oopsie ouch_1 ouch_2 play push run shake sigh singing sneeze snore stack swipe_1 swipe_2 tricks triiick trumpet waaaa wakey wheee whistling whoah woo yeah yeeesss yo yummy mood mood_angry mood_anxious mood_boring mood_cranky mood_energetic mood_excited mood_giddy mood_grumpy mood_happy mood_idea mood_impatient mood_nice mood_sad mood_short mood_sleepy mood_tired boost cage guns zings shortmute tracking2}
+  Sounds = %w{bang tone burping drinking eating farting out_of_breath boxing_punch_1 boxing_punch_2 boxing_punch_3 tracking_1 mip_1 mip_2 mip_3 app awww big_shot bleh boom bye converse_1 converse_2 drop dunno fall_over_1 fall_over_2 fight game gloat go gogogo grunt_1 grunt_2 grunt_3 got_it hi_confident hi_unsure hi_scared huh humming_1 humming_2 hurt huuurgh in_love it joke k loop_1 loop_2 low_battery mippee more muah_ha music obstacle oh_oh oh_yeah oopsie ouch_1 ouch_2 play push run shake sigh singing sneeze snore stack swipe_1 swipe_2 tricks triiick trumpet waaaa wakey wheee whistling whoah woo yeah yeeesss yo yummy mood mood_angry mood_anxious mood_boring mood_cranky mood_energetic mood_excited mood_giddy mood_grumpy mood_happy mood_idea mood_impatient mood_nice mood_sad mood_short mood_sleepy mood_tired boost cage guns zings shortmute tracking2}
   # Add some MiP specific Services and Characteristics
 
   class << self
@@ -137,8 +137,10 @@ class MiP
       turn_angle_high = turn_angle >> 8
       turn_angle_low = turn_angle & 0xFF
       send_command 0x70, distance & 0xFF, turn_dir, turn_angle_high, turn_angle_low
+      sleep(distance / 64.0)
     elsif not duration.nil? and distance.nil?
       send_command 0x71, @curr_speed, duration
+      sleep(duration / 100)
     else
       raise "must specify exactly one of either duration or distance"
     end
@@ -147,11 +149,13 @@ class MiP
   # turn right by given number of degrees
   def turnright(degrees: 90)
     send_command 0x74, ((degrees %360) / 5) & 0xFF, 10
+    sleep 0.5
   end
 
   # turn left by given number of degrees
   def turnleft(degrees: 90)
     send_command 0x75, ((degrees %360) / 5) & 0xFF, 10
+    sleep 0.5
   end
 
   # spin to the right by 360 degrees the specified number of times
@@ -177,7 +181,7 @@ class MiP
 
   # play one of the sounds that MiP knows, from 1-106.
   # Or give it a sound name from the Sound Array
-  def play_sound(sound: 0, duration: 2)
+  def play_sound(sound: 0, duration: 1)
     sound_number = 0
     case sound
     when String
@@ -186,6 +190,7 @@ class MiP
       sound_number = sound
     end
     send_command 0x6, sound_number % 106, duration & 0xFF
+    sleep(duration)
   end
 
   def fall_back
@@ -270,8 +275,10 @@ class MiP
     puts command_str.inspect
     puts args.flatten.map {|b| sprintf("%02X", b & 0xFF)}.join
     @device.write(:mip_send_data, :mip_send_write, command_str, raw: true)
-    sleep(2)
-    #@response = @device.read(:mip_receive_data,:mip_receive_notify)
+    
+    @device.subscribe(:mip_receive_data,:mip_receive_notify) do | handle|
+      puts "response from #{command_str.inspect}: " + handle.inspect
+    end
                       
     # return any response in packed byte format
     # pack_response(@mip_reader.read)
