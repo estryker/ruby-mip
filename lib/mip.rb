@@ -266,10 +266,11 @@ class MiP
 
   def send_command(*args)
     # flatten the args, make sure each byte is between 0-0xFF, and send it.
-    command_str = args.flatten.map {|b| sprintf("\\x%02X", b & 0xFF)}.join
-    puts command_str
+    command_str = args.flatten.pack("C*")
+    puts command_str.inspect
+    puts args.flatten.map {|b| sprintf("%02X", b & 0xFF)}.join
     @device.write(:mip_send_data, :mip_send_write, command_str, raw: true)
-    
+  
     #@response = @device.read(:mip_receive_data,:mip_receive_notify)
                       
     # return any response in packed byte format
