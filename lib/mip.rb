@@ -270,7 +270,7 @@ class MiP
     puts command_str.inspect
     puts args.flatten.map {|b| sprintf("%02X", b & 0xFF)}.join
     @device.write(:mip_send_data, :mip_send_write, command_str, raw: true)
-  
+    sleep(2)
     #@response = @device.read(:mip_receive_data,:mip_receive_notify)
                       
     # return any response in packed byte format
