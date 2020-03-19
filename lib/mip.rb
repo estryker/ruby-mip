@@ -90,6 +90,9 @@ class MiP
   def connect!  
     @device.connect
     @connected = true
+    @device.subscribe(:mip_receive_data,:mip_receive_notify) do | handle|
+      puts "response: " + handle.inspect
+    end
   end
 
   # return a true/false if MiP is connected
@@ -147,15 +150,21 @@ class MiP
   end
 
   # keep going until stop command if duration_seconds == 0
+  # NOTE: this doesn't seem to work. Was going to use it for a keyboard mode, but will have to 
+  #       use another method. 
   def continuous_drive(duration_seconds: 0, spin: 0, left_spin: false,backwards: false, crazy: false)
     speed = @curr_speed + 1
+    spin += 0x41
+    puts "A curr speed: #{@curr_speed} speed: #{speed}"
     speed += 0x20 if backwards # range for backwards is 0x21->
-    spin += 0x20 if left_spin and spin > 0
+    spin += 0x20 if left_spin
+    puts "B curr speed: #{@curr_speed} speed: #{speed}"
     if crazy 
       speed += 0x80 
       spin += 0x80
     end
-    send_command 0x78, speed & 0xFF #, spin & 0xFF
+    puts "C curr speed: #{@curr_speed} speed: #{speed}"
+    send_command 0x78, speed & 0xFF ,spin & 0xFF
     if duration_seconds > 0
       sleep(duration_seconds)
       stop
@@ -292,9 +301,7 @@ class MiP
     puts args.flatten.map {|b| sprintf("%02X", b & 0xFF)}.join
     @device.write(:mip_send_data, :mip_send_write, command_str, raw: true)
     
-    @device.subscribe(:mip_receive_data,:mip_receive_notify) do | handle|
-      puts "response from #{command_str.inspect}: " + handle.inspect
-    end
+    
                       
     # return any response in packed byte format
     # pack_response(@mip_reader.read)
