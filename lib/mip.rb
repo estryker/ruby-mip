@@ -60,6 +60,7 @@ class MiP
     # Get device and connect to it
     @device = @adapter[mac_address]
     @connected = false
+    @callbacks = Hash.new {|h,k| h[k] = []}
     connect!
   end
 
@@ -90,11 +91,47 @@ class MiP
   def connect!  
     @device.connect
     @connected = true
-    @device.subscribe(:mip_receive_data,:mip_receive_notify) do | handle|
+    @device.subscribe(:mip_receive_data,:mip_receive_notify) do | response |
       puts "response: " + handle.inspect
+      code = response[0]
+      message = response[1..-1]
+      @callbacks[response[0]].each {|c| c.call(message)}
     end
   end
 
+  def on_gesture(direction: 'all', &blk)
+     case direction
+     when 'left','all'
+      @callbacks[0x0A] << response_proc(0x0A,blk)
+     when 'right','all'
+      @callbacks[0x0A] << response_proc(0x0B,blk)
+     when 'center_sweep_left','all'
+      @callbacks[0x0A] << response_proc(0x0C,blk)
+     when 'center_sweep_right','all'
+      @callbacks[0x0A] << response_proc(0x0D,blk)
+     when 'center_hold','all'
+      @callbacks[0x0A] << response_proc(0x0E,blk)
+     when 'forward','all'
+      @callbacks[0x0A] << response_proc(0x0F,blk)
+     when 'back','all'
+      @callbacks[0x0A] << response_proc(0x10,blk)
+     end
+  end
+
+  def on_status_check(&blk)
+     @callbacks[0x79] << response_proc blk
+  end
+
+  # response procs will come in two flavors. 1 - if the code matches, call the block. 2. call the block with the message
+  # TODO: make 2 response_proc methods to match the two flavors?
+  def response_proc(code=nil,&blk)
+     Proc.new do | message |
+        if code.nil? or code.empty? or code[0] == message
+          blk.call(message)
+        end
+     end
+  end
+  
   # return a true/false if MiP is connected
   def connected?
     @connected
@@ -129,6 +166,18 @@ class MiP
   # initial test for getting a response
   def get_status
     send_command(0x79)
+  end
+
+  def gesture_mode_on! 
+    send_command(0x0C,0x02)
+  end
+
+  def radar_mode_on!
+    send_command(0x0C,0x04)
+  end
+
+  def gestures_and_radar_off!
+    send_command(0x0C,0)
   end
 
   # move forward by duration or distance 
