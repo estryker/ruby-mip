@@ -92,7 +92,7 @@ class MiP
     @device.connect
     @connected = true
     @device.subscribe(:mip_receive_data,:mip_receive_notify) do | response |
-      puts "response: " + handle.inspect
+      puts "response: " + response.inspect
       code = response[0]
       message = response[1..-1]
       @callbacks[response[0]].each {|c| c.call(message)}
@@ -102,24 +102,24 @@ class MiP
   def on_gesture(direction: 'all', &blk)
      case direction
      when 'left','all'
-      @callbacks[0x0A] << response_proc(0x0A,blk)
+      @callbacks[0x0A] << response_proc(0x0A,&blk)
      when 'right','all'
-      @callbacks[0x0A] << response_proc(0x0B,blk)
+      @callbacks[0x0A] << response_proc(0x0B,&blk)
      when 'center_sweep_left','all'
-      @callbacks[0x0A] << response_proc(0x0C,blk)
+      @callbacks[0x0A] << response_proc(0x0C,&blk)
      when 'center_sweep_right','all'
-      @callbacks[0x0A] << response_proc(0x0D,blk)
+      @callbacks[0x0A] << response_proc(0x0D,&blk)
      when 'center_hold','all'
-      @callbacks[0x0A] << response_proc(0x0E,blk)
+      @callbacks[0x0A] << response_proc(0x0E,&blk)
      when 'forward','all'
-      @callbacks[0x0A] << response_proc(0x0F,blk)
+      @callbacks[0x0A] << response_proc(0x0F,&blk)
      when 'back','all'
-      @callbacks[0x0A] << response_proc(0x10,blk)
+      @callbacks[0x0A] << response_proc(0x10,&blk)
      end
   end
 
   def on_status_check(&blk)
-     @callbacks[0x79] << response_proc blk
+     @callbacks[0x79] << response_proc(&blk)
   end
 
   # response procs will come in two flavors. 1 - if the code matches, call the block. 2. call the block with the message
@@ -131,7 +131,7 @@ class MiP
         end
      end
   end
-  
+
   # return a true/false if MiP is connected
   def connected?
     @connected
