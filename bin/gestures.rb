@@ -22,7 +22,7 @@ MiP.start '1C:37:8D:FB:20:87' do
     on_status_check do | message |
         puts "status check: " + message.inspect
     end
-
+    gesture_mode_on!
     flash_chest(color: 'green',on_duration: 10,off_duration: 5)
     sleep(10)
     get_status
