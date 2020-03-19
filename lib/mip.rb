@@ -260,7 +260,7 @@ class MiP
     sound_number = 0
     case sound
     when String
-      sound_number = Sounds.index(sound)
+      sound_number = Sounds.index(sound) || 0
     when Fixnum
       sound_number = sound
     end

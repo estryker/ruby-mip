@@ -4,7 +4,7 @@ require "../lib/mip.rb"
 
 MiP.start '1C:37:8D:FB:20:87' do
     on_gesture(direction: 'left') do 
-        play_sound(sound: 'uh_oh')
+        play_sound(sound: 'oh_oh')
     end
     on_gesture(direction: 'right') do 
         play_sound(sound: 'oh_yeah')
