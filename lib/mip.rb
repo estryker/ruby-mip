@@ -308,7 +308,7 @@ class MiP
       curr_key = c
       case c
       when "\e[A"
-        forward 0.05
+        drive duration: 0.05
       when "\e[B"
         #        roll @curr_speed, BACKWARD
         #        keep_going 0.2
@@ -317,23 +317,19 @@ class MiP
         # forward 0.1
       when "\e[C"
         turnright 15
-        forward 0.05 unless @curr_speed == 0
+        drive duration: 0.05 unless @curr_speed == 0
       when "\e[D"
         turnleft 15
         forward 0.05 unless @curr_speed == 0
       when "a"
         #TODO: test to see what the max speed is. for now, keep it in one byte
-        if @curr_speed < 246
-          @curr_speed += 10
+        if @curr_speed < 30
+          @curr_speed += 1
         else
-          @curr_speed = 255
+          @curr_speed = 30
         end
       when "z"
-        if @curr_speed <= 10
-          @curr_speed = 0
-        else
-          @curr_speed -= 10
-        end
+          @curr_speed -= 1
       when "h"
         puts @command_help
       when "/"
