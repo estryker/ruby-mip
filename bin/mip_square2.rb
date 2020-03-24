@@ -7,7 +7,7 @@ MiP.start '1C:37:8D:FB:20:87' do
 
   set_speed(new_speed: 20)
   4.times do
-    forward(duration: 100)
+    drive(duration: 100)
     turnright(degrees: 90)
     play_sound(sound: "boxing_punch_1")
   end

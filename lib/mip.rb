@@ -225,10 +225,10 @@ class MiP
       spin += 0x80
     end
     puts "C curr speed: #{@curr_speed} speed: #{speed}"
-    send_command 0x78, speed & 0xFF ,spin & 0xFF
-    if duration_seconds > 0
-      sleep(duration_seconds)
-      stop
+    time_start = Time.now
+    until (Time.now - time_start) > duration_seconds
+      send_command 0x78, speed & 0xFF ,spin & 0xFF
+      sleep 0.01
     end
   end
 
