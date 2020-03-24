@@ -25,7 +25,13 @@ end
 
 class MiP
   include Utils
-  Sounds = %w{bang tone burping drinking eating farting out_of_breath boxing_punch_1 boxing_punch_2 boxing_punch_3 tracking_1 mip_1 mip_2 mip_3 app awww big_shot bleh boom bye converse_1 converse_2 drop dunno fall_over_1 fall_over_2 fight game gloat go gogogo grunt_1 grunt_2 grunt_3 got_it hi_confident hi_unsure hi_scared huh humming_1 humming_2 hurt huuurgh in_love it joke k loop_1 loop_2 low_battery mippee more muah_ha music obstacle oh_oh oh_yeah oopsie ouch_1 ouch_2 play push run shake sigh singing sneeze snore stack swipe_1 swipe_2 tricks triiick trumpet waaaa wakey wheee whistling whoah woo yeah yeeesss yo yummy mood mood_angry mood_anxious mood_boring mood_cranky mood_energetic mood_excited mood_giddy mood_grumpy mood_happy mood_idea mood_impatient mood_nice mood_sad mood_short mood_sleepy mood_tired boost cage guns zings shortmute tracking2}
+  Sounds = %w{bang tone burping drinking eating farting out_of_breath boxing_punch_1 boxing_punch_2 boxing_punch_3 tracking_1 mip_1 mip_2 mip_3 
+              app awww big_shot bleh boom bye converse_1 converse_2 drop dunno fall_over_1 fall_over_2 fight game gloat go gogogo grunt_1 
+              grunt_2 grunt_3 got_it hi_confident hi_unsure hi_scared huh humming_1 humming_2 hurt huuurgh in_love it joke k loop_1 loop_2 
+              low_battery mippee more muah_ha music obstacle oh_oh oh_yeah oopsie ouch_1 ouch_2 play push run shake sigh singing sneeze 
+              snore stack swipe_1 swipe_2 tricks triiick trumpet waaaa wakey wheee whistling whoah woo yeah yeeesss yo yummy mood mood_angry 
+              mood_anxious mood_boring mood_cranky mood_energetic mood_excited mood_giddy mood_grumpy mood_happy mood_idea mood_impatient 
+              mood_nice mood_sad mood_short mood_sleepy mood_tired boost cage guns zings shortmute tracking2}
   # Add some MiP specific Services and Characteristics
 
   class << self
@@ -61,6 +67,9 @@ class MiP
     @device = @adapter[mac_address]
     @connected = false
     @callbacks = Hash.new {|h,k| h[k] = []}
+    @keyboard_commands = {}
+    @command_help = []
+
     connect!
   end
 
@@ -128,6 +137,7 @@ class MiP
   def response_proc(code=nil,&blk)
      Proc.new do | message |
         if code.nil? or code.empty? or code == message
+          puts "Calling proc. code: #{code} message: #{message}"
           blk.call(message)
         end
      end
@@ -182,22 +192,23 @@ class MiP
   end
 
   # move forward by duration or distance 
-  def forward(duration: nil, distance: nil,angle: 0)
-
+  def drive(duration: nil, distance: nil,backward: false,angle: 0)
+    direction = backward ? 1 : 0
     if duration.nil? and not distance.nil?
       turn_dir = angle > 0 ? 0x0 : 0x1
       turn_angle = angle % 360
       turn_angle_high = turn_angle >> 8
       turn_angle_low = turn_angle & 0xFF
-      send_command 0x70, distance & 0xFF, turn_dir, turn_angle_high, turn_angle_low
+      send_command 0x70, direction, distance & 0xFF, turn_dir, turn_angle_high, turn_angle_low
       sleep(distance / 64.0)
     elsif not duration.nil? and distance.nil?
-      send_command 0x71, @curr_speed, duration
+      send_command ((0x71 + direction) & 0xFF), @curr_speed, duration
       sleep(duration / 100)
     else
       raise "must specify exactly one of either duration or distance"
     end
   end
+
 
   # keep going until stop command if duration_seconds == 0
   # NOTE: this doesn't seem to work. Was going to use it for a keyboard mode, but will have to 
@@ -257,6 +268,7 @@ class MiP
   # play one of the sounds that MiP knows, from 1-106.
   # Or give it a sound name from the Sound Array
   def play_sound(sound: 0, duration: 1)
+    puts "Playing sound: #{sound}"
     sound_number = 0
     case sound
     when String
@@ -264,6 +276,7 @@ class MiP
     when Fixnum
       sound_number = sound
     end
+    puts "sound number: #{sound_number}"
     send_command 0x6, sound_number % 106, duration & 0xFF
     sleep(duration)
   end
@@ -276,8 +289,73 @@ class MiP
     send_command 0x8, 0x1
   end
 
+  # this doesn't seem to work. It seems to be more of a physics thing
   def getup
     send_command 0x23, 0x2
+  end
+
+  def on_keyboard_command(command_char, help_str, &blk)
+    @keyboard_commands[command_char] = blk
+    @command_help << "#{command_char}\t#{help_str}\n"
+  end
+
+  def keyboard_mode
+    STDIN.echo = false
+    STDIN.raw!
+    prev_key = ""
+    while true
+      c = read_char
+      curr_key = c
+      case c
+      when "\e[A"
+        forward 0.05
+      when "\e[B"
+        #        roll @curr_speed, BACKWARD
+        #        keep_going 0.2
+        stop
+        turnaround if prev_key == "\e[B" # to allow to stop and turnaround 
+        # forward 0.1
+      when "\e[C"
+        turnright 15
+        forward 0.05 unless @curr_speed == 0
+      when "\e[D"
+        turnleft 15
+        forward 0.05 unless @curr_speed == 0
+      when "a"
+        #TODO: test to see what the max speed is. for now, keep it in one byte
+        if @curr_speed < 246
+          @curr_speed += 10
+        else
+          @curr_speed = 255
+        end
+      when "z"
+        if @curr_speed <= 10
+          @curr_speed = 0
+        else
+          @curr_speed -= 10
+        end
+      when "h"
+        puts @command_help
+      when "/"
+        # do I need to get us out of raw mode??
+        STDIN.echo = true
+        print "/"
+        STDIN.cooked!
+        command,arg = gets.strip.split " "
+        if @keyboard_commands.has_key? command
+          @keyboard_commands[command].call(arg)
+        else
+          puts "Unknown command"
+          puts @command_help
+        end
+        STDIN.echo = false
+        STDIN.raw!
+      when "\u0003"
+        puts "Quiting ..."
+        break
+      end
+      prev_key = curr_key
+    end
   end
 
   # :nodoc: 
@@ -349,7 +427,7 @@ class MiP
     command_str = args.flatten.pack("C*")
     puts command_str.inspect
     puts args.flatten.map {|b| sprintf("%02X", b & 0xFF)}.join
-    @device.write(:mip_send_data, :mip_send_write, command_str, raw: true)
+    @device.write(:mip_send_data, :mip_send_write, command_str, raw: true, async: true)
     
     
                       

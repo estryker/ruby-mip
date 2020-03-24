@@ -12,12 +12,12 @@ MiP.start '1C:37:8D:FB:20:87' do
     on_gesture(direction: 'forward') do 
         play_sound(sound: 'burping')
         set_speed(new_speed: 20)
-        forward(duration: 100)
+        drive(duration: 100)
     end
     on_gesture(direction: 'back') do 
         play_sound(sound: 'farting')
         set_speed(new_speed: 20)
-        backward(duration: 100)
+        drive(duration: 100, backwards: true)
     end
     on_status_check do | message |
         puts "status check: " + message.inspect
