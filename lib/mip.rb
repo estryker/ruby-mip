@@ -1,6 +1,8 @@
 require 'ble'
 require 'open3'
 require 'io/wait'
+require 'io/console'
+
 require '../lib/utils'
 
 module BLE
@@ -102,7 +104,7 @@ class MiP
     @connected = true
     @device.subscribe(:mip_receive_data,:mip_receive_notify) do | response |
       # responses come back in ASCII Hex, upper case. No need to convert unless necessary
-      puts "response: " + response.inspect
+      # puts "response: " + response.inspect
       code = response[0..1]
       message = response[2..-1]
       @callbacks[code].each {|c| c.call(message)}
@@ -137,7 +139,7 @@ class MiP
   def response_proc(code=nil,&blk)
      Proc.new do | message |
         if code.nil? or code.empty? or code == message
-          puts "Calling proc. code: #{code} message: #{message}"
+          # puts "Calling proc. code: #{code} message: #{message}"
           blk.call(message)
         end
      end
@@ -216,15 +218,15 @@ class MiP
   def continuous_drive(duration_seconds: 0, spin: 0, left_spin: false,backwards: false, crazy: false)
     speed = @curr_speed + 1
     spin += 0x41
-    puts "A curr speed: #{@curr_speed} speed: #{speed}"
+    #puts "A curr speed: #{@curr_speed} speed: #{speed}"
     speed += 0x20 if backwards # range for backwards is 0x21->
     spin += 0x20 if left_spin
-    puts "B curr speed: #{@curr_speed} speed: #{speed}"
+    #puts "B curr speed: #{@curr_speed} speed: #{speed}"
     if crazy 
       speed += 0x80 
       spin += 0x80
     end
-    puts "C curr speed: #{@curr_speed} speed: #{speed}"
+    #puts "C curr speed: #{@curr_speed} speed: #{speed}"
     time_start = Time.now
     until (Time.now - time_start) > duration_seconds
       send_command 0x78, speed & 0xFF ,spin & 0xFF
@@ -240,7 +242,7 @@ class MiP
 
   # turn left by given number of degrees
   def turnleft(degrees: 90)
-    send_command 0x75, ((degrees %360) / 5) & 0xFF, 10
+    send_command 0x73, ((degrees %360) / 5) & 0xFF, 10
     sleep 0.5
   end
 
@@ -268,7 +270,7 @@ class MiP
   # play one of the sounds that MiP knows, from 1-106.
   # Or give it a sound name from the Sound Array
   def play_sound(sound: 0, duration: 1)
-    puts "Playing sound: #{sound}"
+    #puts "Playing sound: #{sound}"
     sound_number = 0
     case sound
     when String
@@ -276,7 +278,7 @@ class MiP
     when Fixnum
       sound_number = sound
     end
-    puts "sound number: #{sound_number}"
+    #puts "sound number: #{sound_number}"
     send_command 0x6, sound_number % 106, duration & 0xFF
     sleep(duration)
   end
@@ -308,19 +310,15 @@ class MiP
       curr_key = c
       case c
       when "\e[A"
-        drive duration: 0.05
+        continuous_drive duration_seconds: 0.1
       when "\e[B"
-        #        roll @curr_speed, BACKWARD
-        #        keep_going 0.2
-        stop
-        turnaround if prev_key == "\e[B" # to allow to stop and turnaround 
-        # forward 0.1
+        continuous_drive duration_seconds: 0.1,backwards: true
       when "\e[C"
-        turnright 15
-        drive duration: 0.05 unless @curr_speed == 0
+        turnright degrees: 15
+        continuous_drive duration_seconds: 0.1 unless @curr_speed == 0
       when "\e[D"
-        turnleft 15
-        forward 0.05 unless @curr_speed == 0
+        turnleft degrees: 15
+        continuous_drive duration_seconds: 0.1 unless @curr_speed == 0
       when "a"
         #TODO: test to see what the max speed is. for now, keep it in one byte
         if @curr_speed < 30
@@ -354,13 +352,28 @@ class MiP
     end
   end
 
+  # used in command input
+  def read_char
+    STDIN.echo = false
+    STDIN.raw!
+
+    input = STDIN.getc.chr
+    if input == "\e" then
+     input << STDIN.read_nonblock(3) rescue nil
+     input << STDIN.read_nonblock(2) rescue nil
+    end
+  ensure
+   STDIN.echo = true
+   STDIN.cooked!
+
+    return input
+  end
+
   # :nodoc: 
   def method_missing(method_name, *args, **named_args,&block)
-    puts method_name
+    # puts method_name
     if mobj = method_name.to_s.match(/^play_([a-z]{1,100})_sound$/)
       sound_name = mobj[1]
-      puts sound_name
-      puts mobj.inspect
       if Sounds.index(sound_name)
         play_sound(sound: sound_name, duration: named_args[:duration] )
       else
@@ -405,7 +418,7 @@ class MiP
   def send_command_old(*args)
     # flatten the args, make sure each byte is between 0-0xFF, and send it.
     command_str = "char-write-cmd 0x001b " + args.flatten.map {|b| sprintf("%02X", b & 0xFF)}.join
-    puts command_str
+    # puts command_str
     @mip_writer.puts(command_str)
     
     # TODO: check to see if the reader has anything in the buffer, then read
@@ -421,8 +434,8 @@ class MiP
   def send_command(*args)
     # flatten the args, make sure each byte is between 0-0xFF, and send it.
     command_str = args.flatten.pack("C*")
-    puts command_str.inspect
-    puts args.flatten.map {|b| sprintf("%02X", b & 0xFF)}.join
+    #puts command_str.inspect
+    #puts args.flatten.map {|b| sprintf("%02X", b & 0xFF)}.join
     @device.write(:mip_send_data, :mip_send_write, command_str, raw: true, async: true)
     
     

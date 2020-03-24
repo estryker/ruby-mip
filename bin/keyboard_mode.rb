@@ -14,9 +14,9 @@ MiP.start '1C:37:8D:FB:20:87' do
   end
 
   on_keyboard_command "spin", "spin to the right the specified number of times " do | times_str |
-    times = timesstr.to_i
-    spinright num_times: times
+    times = times_str.to_i
+    spinright(num_times: times)
   end
-  
+  puts "Ready!"
   keyboard_mode
 end
