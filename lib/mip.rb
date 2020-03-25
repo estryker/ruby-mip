@@ -302,11 +302,19 @@ class MiP
   end
 
   def keyboard_mode
-    STDIN.echo = false
-    STDIN.raw!
+    begin
+    #STDIN.echo = false
+    #STDIN.raw!
+    old_stty_state = `stty -g`
+    system "stty raw -echo"
     prev_key = ""
     while true
-      c = read_char
+      c = STDIN.getc.chr
+      # special characters like arrow keys. could be 3 or 2 bytes
+      if c == "\e" then
+       c << STDIN.read_nonblock(3) rescue nil
+       c << STDIN.read_nonblock(2) rescue nil
+      end
       curr_key = c
       case c
       when "\e[A"
@@ -314,20 +322,24 @@ class MiP
       when "\e[B"
         continuous_drive duration_seconds: 0.1,backwards: true
       when "\e[C"
-        turnright degrees: 15
-        continuous_drive duration_seconds: 0.1 unless @curr_speed == 0
+        turnright degrees: 30
+        #continuous_drive duration_seconds: 0.1 unless @curr_speed == 0
       when "\e[D"
-        turnleft degrees: 15
-        continuous_drive duration_seconds: 0.1 unless @curr_speed == 0
+        turnleft degrees: 30
+        #continuous_drive duration_seconds: 0.1 unless @curr_speed == 0
       when "a"
         #TODO: test to see what the max speed is. for now, keep it in one byte
         if @curr_speed < 30
-          @curr_speed += 1
+          @curr_speed += 5
         else
           @curr_speed = 30
         end
       when "z"
-          @curr_speed -= 1
+        if @curr_speed > 5
+          @curr_speed -= 5
+        else
+          @curr_speed = 0
+        end
       when "h"
         puts @command_help
       when "/"
@@ -347,8 +359,14 @@ class MiP
       when "\u0003"
         puts "Quiting ..."
         break
+     
       end
       prev_key = curr_key
+      end
+    ensure
+      system "stty #{old_stty_state}"
+      #STDIN.echo = true
+      #STDIN.cooked!
     end
   end
 
