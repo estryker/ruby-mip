@@ -61,7 +61,7 @@ class MiP
 
   def initialize(mac_address:, interface: 'hci0')
     @logger = Logger.new(STDOUT)
-    @logger.level = Logger::WARN
+    @logger.level = Logger::DEBUG
     
     @mac = mac_address
     @curr_speed = 15

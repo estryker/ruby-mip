@@ -3,6 +3,8 @@
 require "../lib/mip.rb"
 
 MiP.start '1C:37:8D:FB:20:87' do
+  debug = true
+  @logger.debug "flash chest"
   flash_chest(color: 'green',on_duration: 10,off_duration: 5)
 
   set_speed(new_speed: 20)

@@ -8,7 +8,7 @@ MiP.start '1C:37:8D:FB:20:87' do
     size = size_str.to_i
     4.times do 
       @logger.debug "driving"
-      drive(distance: size)
+      drive(duration: size)
       @logger.debug "turning"
       turnright(degrees: 90)
       @logger.debug "playing sound"
