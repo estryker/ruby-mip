@@ -2,7 +2,7 @@ require 'ble'
 require 'open3'
 require 'io/wait'
 require 'io/console'
-
+require 'logger'
 require '../lib/utils'
 
 module BLE
@@ -51,7 +51,18 @@ class MiP
     end
   end
 
+  def debug=(is_on)
+    if is_on
+      @logger.level = Logger::DEBUG 
+    else
+      @logger.level = Logger::WARN
+    end
+  end
+
   def initialize(mac_address:, interface: 'hci0')
+    @logger = Logger.new(STDOUT)
+    @logger.level = Logger::WARN
+    
     @mac = mac_address
     @curr_speed = 15
 
@@ -104,7 +115,7 @@ class MiP
     @connected = true
     @device.subscribe(:mip_receive_data,:mip_receive_notify) do | response |
       # responses come back in ASCII Hex, upper case. No need to convert unless necessary
-      # puts "response: " + response.inspect
+      @logger.debug "response: " + response.inspect
       code = response[0..1]
       message = response[2..-1]
       @callbacks[code].each {|c| c.call(message)}
@@ -139,7 +150,7 @@ class MiP
   def response_proc(code=nil,&blk)
      Proc.new do | message |
         if code.nil? or code.empty? or code == message
-          # puts "Calling proc. code: #{code} message: #{message}"
+          @logger.debug "Calling proc. code: #{code} message: #{message}"
           blk.call(message)
         end
      end
@@ -176,6 +187,9 @@ class MiP
     send_command(0x89, color_to_bytes(color), on_duration & 0xFF, off_duration & 0xFF)
   end
 
+  def set_chest_led(color: "green")
+    send_command(0x84, color_to_bytes(color))
+  end
   # initial test for getting a response
   def get_status
     send_command(0x79)
@@ -218,15 +232,15 @@ class MiP
   def continuous_drive(duration_seconds: 0, spin: 0, left_spin: false,backwards: false, crazy: false)
     speed = @curr_speed + 1
     spin += 0x41
-    #puts "A curr speed: #{@curr_speed} speed: #{speed}"
+    @logger.debug "A curr speed: #{@curr_speed} speed: #{speed}"
     speed += 0x20 if backwards # range for backwards is 0x21->
     spin += 0x20 if left_spin
-    #puts "B curr speed: #{@curr_speed} speed: #{speed}"
+    @logger.debug "B curr speed: #{@curr_speed} speed: #{speed}"
     if crazy 
       speed += 0x80 
       spin += 0x80
     end
-    #puts "C curr speed: #{@curr_speed} speed: #{speed}"
+    @logger.debug "C curr speed: #{@curr_speed} speed: #{speed}"
     time_start = Time.now
     until (Time.now - time_start) > duration_seconds
       send_command 0x78, speed & 0xFF ,spin & 0xFF
@@ -270,7 +284,7 @@ class MiP
   # play one of the sounds that MiP knows, from 1-106.
   # Or give it a sound name from the Sound Array
   def play_sound(sound: 0, duration: 1)
-    #puts "Playing sound: #{sound}"
+    @logger.debug "Playing sound: #{sound}"
     sound_number = 0
     case sound
     when String
@@ -278,7 +292,7 @@ class MiP
     when Fixnum
       sound_number = sound
     end
-    #puts "sound number: #{sound_number}"
+    @logger.debug "sound number: #{sound_number}"
     send_command 0x6, sound_number % 106, duration & 0xFF
     sleep(duration)
   end
@@ -306,7 +320,9 @@ class MiP
     #STDIN.echo = false
     #STDIN.raw!
     old_stty_state = `stty -g`
-    system "stty raw -echo"
+    stty_string = "stty raw"
+    stty_string += " -echo" unless @logger.level == Logger::DEBUG
+    system stty_string 
     prev_key = ""
     while true
       c = STDIN.getc.chr
@@ -354,7 +370,7 @@ class MiP
           puts "Unknown command"
           puts @command_help
         end
-        STDIN.echo = false
+        STDIN.echo = false unless @logger.level == Logger::DEBUG 
         STDIN.raw!
       when "\u0003"
         puts "Quiting ..."
@@ -452,12 +468,9 @@ class MiP
   def send_command(*args)
     # flatten the args, make sure each byte is between 0-0xFF, and send it.
     command_str = args.flatten.pack("C*")
-    #puts command_str.inspect
-    #puts args.flatten.map {|b| sprintf("%02X", b & 0xFF)}.join
-    @device.write(:mip_send_data, :mip_send_write, command_str, raw: true, async: true)
-    
-    
-                      
+    @logger.debug command_str.inspect
+    @logger.debug args.flatten.map {|b| sprintf("%02X", b & 0xFF)}.join
+    @device.write(:mip_send_data, :mip_send_write, command_str, raw: true, async: true)    
     # return any response in packed byte format
     # pack_response(@mip_reader.read)
   end
